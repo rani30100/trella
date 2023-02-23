@@ -8,7 +8,7 @@ use App\Trello\controllers\AbstractController;
 
 class DeleteListController extends AbstractController
 {
-    public function index()
+    public function index() : void
     {
         $listModel = new ListModel();
         
@@ -19,6 +19,6 @@ class DeleteListController extends AbstractController
             $listModel->delete($list_id, $project_id);
         }
         
-        $this->redirect('?page=board&id='.$project_id);
+       $this->redirect('?page=board&id='.$project_id);
     }
 }

@@ -3,6 +3,7 @@ namespace App\Trello\models;
 
 use PDO;
 use App\Trello\utils\Database;
+use App\Trello\models\CardModel;
 
 class ListModel
 {
@@ -12,6 +13,7 @@ class ListModel
     private $id;
     private $title;
     private $project_id;
+    private $cards = null;
 
     // Constructeur de la classe qui initialise la connexion à la base de données en appelant la fonction getConnection() définie dans le fichier database.php
     public function __construct()
@@ -19,7 +21,7 @@ class ListModel
         $this->pdo = Database::getConnection();
     }
 
-    public function create($title, $project_id)
+    public function create($title, $project_id) : bool
     {
         $sql = "INSERT INTO `List` (`id`, `title`, `project_id`) VALUES (NULL, :title, :project_id);";
         $pdoStatement = $this->pdo->prepare($sql);
@@ -29,7 +31,7 @@ class ListModel
         return $result;
     }
     
-    public function findAll()
+    public function findAll() : array
     {
         $sql = "SELECT * FROM `List`;";
         $pdoStatement = $this->pdo->prepare($sql);
@@ -38,7 +40,7 @@ class ListModel
         return $lists;
     }
     
-    public function findByProject($project_id)
+    public function findByProject($project_id) : array
     {
         $sql = "SELECT * FROM `List` WHERE `project_id` = :project_id;";
         $pdoStatement = $this->pdo->prepare($sql);
@@ -49,7 +51,7 @@ class ListModel
     }
 
     
-    public function delete($list_id, $project_id)
+    public function delete($list_id, $project_id) : bool
     {
         $sql = "DELETE FROM `List` WHERE `project_id` = :project_id AND `id` = :list_id;";
         $pdoStatement = $this->pdo->prepare($sql);
@@ -62,7 +64,7 @@ class ListModel
     /**
      * Get the value of id
      */ 
-    public function getId()
+    public function getId() : int
     {
         return $this->id;
     }
@@ -72,7 +74,7 @@ class ListModel
      *
      * @return  self
      */ 
-    public function setId($id)
+    public function setId(int $id) : self
     {
         $this->id = $id;
 
@@ -82,7 +84,7 @@ class ListModel
     /**
      * Get the value of title
      */ 
-    public function getTitle()
+    public function getTitle() : string
     {
         return ucwords(strtolower($this->title));
     }
@@ -92,7 +94,7 @@ class ListModel
      *
      * @return  self
      */ 
-    public function setTitle($title)
+    public function setTitle(string $title): self
     {
         $this->title = $title;
 
@@ -102,7 +104,7 @@ class ListModel
     /**
      * Get the value of project_id
      */ 
-    public function getProjectId()
+    public function getProjectId() : int
     {
         return $this->project_id;
     }
@@ -112,9 +114,35 @@ class ListModel
      *
      * @return  self
      */ 
-    public function setProjectId($project_id)
+    public function setProjectId(int $project_id) : self
     {
         $this->project_id = $project_id;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of cards
+     */ 
+    public function getCards()
+    {
+        if($this->cards === null) {
+            // je les récupère dans la base de données
+            $cardModel = new cardModel();
+            $this->cards = $cardModel->findByList($this->id);
+        }
+
+        return $this->cards;
+    }
+
+    /**
+     * Set the value of cards
+     *
+     * @return  self
+     */ 
+    public function setCards($cards)
+    {
+        $this->cards = $cards;
 
         return $this;
     }
