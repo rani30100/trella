@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+namespace App\Trello\views;
 <html>
     <head>
         <meta charset="utf-8">
@@ -7,6 +8,7 @@
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     </head>
     <body>
+ 
         <?php include "_navbar.php" ?>
 
         <main>
@@ -36,13 +38,13 @@
                                     <a href="<?= $router->generate('list_delete', ['project_id' => $project->getId(),'list_id' => $list->getId()]) ?>" class="delete"></a>
                                 </p>
                             </header>
-                            <div class="card-content">
-                                <?php foreach($list->getCards() as $card): ?>
+                            <div class="card-content list">
+                            <?php foreach($list->getCards() as $card): ?>
                                     <div class="notification has-background-white">
                                         <a href="<?= $router->generate('card_delete', ['project_id'=> $project->getId(), 'list_id' => $list->getId(), 'card_id' => $card->getId()]) ?>" class="delete"></a>
                                         <?= $card->getTitle() ?>
                                     </div>
-                                <?php endforeach ?>
+                                    <?php endforeach ?>
                                 <form class="py-5" action="<?= $router->generate("card_add", ['project_id' => $list->getProjectId(), 'list_id' => $list->getId()]) ?>" method="POST">
                                     <input type="hidden" name="listId" value="<?= $list->getId() ?>">
                                     <input type="hidden" name="projectId" value="<?= $list->getProjectId() ?>">
@@ -61,6 +63,17 @@
                 <?php endforeach ?>
             </div>
         </main>
-       
+
+        <script src="//code.jquery.com/jquery-1.12.0.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+        <script>
+            $(function() {
+            $(".list").sortable({
+                connectWith:".list"
+            })
+            });
+
+        </script>
+      
     </body>
 </html>
